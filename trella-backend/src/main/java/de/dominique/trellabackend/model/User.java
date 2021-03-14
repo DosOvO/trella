@@ -6,14 +6,12 @@ import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import java.util.List;
 
-@Entity
+@Entity(name = "users")
 @Data
 public class User extends BaseEntity {
 
     private String name;
     private String email;
     private String password;
-    @OneToMany
-    private List<Task> tasks;
 
 }
