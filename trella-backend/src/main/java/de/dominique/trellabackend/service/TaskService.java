@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -31,13 +32,31 @@ public class TaskService {
         return convertToDto(taskRepository.findAllByUserId(userId));
     }
 
+    public boolean changeTask(final TaskDTO taskDTO) {
+        if (taskDTO.getId() == null) {
+            return false;
+        }
+
+        final Optional<Task> present = taskRepository.findById(taskDTO.getId());
+
+        if (present.isEmpty()) {
+            return false;
+        } else {
+            final Task task = present.get();
+            task.setDescription(taskDTO.getDescription());
+            task.setStatus(taskDTO.getStatus());
+            taskRepository.save(task);
+        }
+
+        return true;
+    }
+
     public boolean createNewTask(final TaskDTO taskDTO) {
-        Task task = modelMapper.map(taskDTO, Task.class);
+        final Task task = modelMapper.map(taskDTO, Task.class);
 
         taskRepository.save(task);
 
         return task.getId() != null;
-
     }
 
     private List<TaskDTO> convertToDto(List<Task> tasks) {
